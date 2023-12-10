@@ -20,26 +20,6 @@ impl Trie {
         }
     }
 
-    pub fn from_array(str_arr: &[&str]) -> Self {
-        let mut root = TrieNode::default();
-
-        for s in str_arr {
-            let mut current_node = &mut root;
-
-            for c in s.chars() {
-                // Navigate down the trie, creating new nodes as necessary
-                current_node = current_node
-                    .children
-                    .entry(c)
-                    .or_insert_with(TrieNode::default);
-            }
-
-            current_node.is_end = true;
-        }
-
-        Self { root }
-    }
-
     pub fn insert(&mut self, word: &str) {
         let mut current_node = &mut self.root;
 
@@ -78,12 +58,24 @@ impl Trie {
     }
 }
 
+impl From<Vec<&str>> for Trie {
+    fn from(words: Vec<&str>) -> Self {
+        let mut trie = Trie::new();
+
+        for word in words {
+            trie.insert(word);
+        }
+
+        trie
+    }
+}
+
 #[cfg(test)]
 mod trie_tests {
     use super::*;
     #[test]
     fn it_works() {
-        let prefixes = Trie::from_array(&[
+        let prefixes = Trie::from(vec![
             "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "1", "2", "3",
             "4", "5", "6", "7", "8", "9",
         ]);
